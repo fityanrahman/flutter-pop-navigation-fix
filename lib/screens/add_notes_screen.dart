@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:router_experiment/const/hero_tag_const.dart';
 
 class AddNotesScreen extends StatefulWidget {
   const AddNotesScreen({super.key});
@@ -17,6 +18,7 @@ class _AddNotesScreenState extends State<AddNotesScreen> {
         child: Text('Add Notes Screen'),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: HeroTagConst.confirmNotesButton,
         onPressed: () {
           context.pop(true);
         },

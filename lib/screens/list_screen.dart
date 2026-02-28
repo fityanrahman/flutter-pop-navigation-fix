@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:router_experiment/const/app_routes_const.dart';
+import 'package:router_experiment/const/hero_tag_const.dart';
 import 'package:router_experiment/const/key_pair_const.dart';
 import 'package:router_experiment/service/shared_preference_service.dart';
 
@@ -72,12 +72,14 @@ class _ListScreenState extends State<ListScreen> {
         spacing: 16,
         children: [
           FloatingActionButton(
+            heroTag: HeroTagConst.clearListButton,
             onPressed: () {
               _clearData();
             },
             child: const Icon(Icons.clear),
           ),
           FloatingActionButton(
+            heroTag: HeroTagConst.addListButton,
             onPressed: () async {
               final result = await context.push(AppRoutesConst.addItemScreen);
               log('[ListScreen] ${result.toString()}');

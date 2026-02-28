@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:router_experiment/const/app_routes_const.dart';
+import 'package:router_experiment/const/hero_tag_const.dart';
 import 'package:router_experiment/const/key_pair_const.dart';
 import 'package:router_experiment/service/shared_preference_service.dart';
 
@@ -31,22 +31,26 @@ class _AddItemScreenState extends State<AddItemScreen> {
         appBar: AppBar(title: const Text('Add Item Screen')),
         body: Form(
           key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _itemController,
-                decoration: const InputDecoration(labelText: 'Item Name'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter an item name';
-                  }
-                  return null;
-                },
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _itemController,
+                  decoration: const InputDecoration(labelText: 'Item Name'),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter an item name';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
           ),
         ),
         floatingActionButton: FloatingActionButton(
+          heroTag: HeroTagConst.confirmAddButton,
           onPressed: () {
             _addItem();
           },
