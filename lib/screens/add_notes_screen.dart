@@ -18,7 +18,7 @@ class _AddNotesScreenState extends State<AddNotesScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.pop();
+          context.pop(true);
         },
         child: const Icon(Icons.check),
       ),

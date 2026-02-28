@@ -26,6 +26,7 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   Future<void> _loadData() async {
+    log('Loading data');
     await _sharedPreferenceService.init();
 
     final value = await _sharedPreferenceService.read(
@@ -77,8 +78,13 @@ class _ListScreenState extends State<ListScreen> {
             child: const Icon(Icons.clear),
           ),
           FloatingActionButton(
-            onPressed: () {
-              context.push(AppRoutesConst.addItemScreen);
+            onPressed: () async {
+              final result = await context.push(AppRoutesConst.addItemScreen);
+              log('[ListScreen] ${result.toString()}');
+
+              if (result != null) {
+                _loadData();
+              }
             },
             child: const Icon(Icons.add),
           ),

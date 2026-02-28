@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +18,6 @@ class _AddItemScreenState extends State<AddItemScreen> {
   late final SharedPreferenceService _sharedPreferenceService;
   final _formKey = GlobalKey<FormState>();
   final _itemController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -27,30 +28,30 @@ class _AddItemScreenState extends State<AddItemScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Item Screen')),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _itemController,
-              decoration: const InputDecoration(labelText: 'Item Name'),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter an item name';
-                }
-                return null;
-              },
-            ),
-          ],
+        appBar: AppBar(title: const Text('Add Item Screen')),
+        body: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _itemController,
+                decoration: const InputDecoration(labelText: 'Item Name'),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter an item name';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _addItem();
-        },
-        child: const Icon(Icons.check),
-      ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _addItem();
+          },
+          child: const Icon(Icons.check),
+        ),
     );
   }
 
@@ -76,7 +77,12 @@ class _AddItemScreenState extends State<AddItemScreen> {
       );
 
       if (mounted) {
-        context.push(AppRoutesConst.addNotesScreen);
+        final result = await context.push(AppRoutesConst.addNotesScreen);
+        log('[Add item screen] ${result.toString()}');
+
+        if (result != null) {
+          context.pop(result);
+        }
       }
     }
   }
