@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -20,12 +22,35 @@ class _ListScreenState extends State<ListScreen> {
   @override
   void initState() {
     super.initState();
-    _sharedPreferenceService.init();
-    _sharedPreferenceService.read(KeyPairConst.listPrefsKey).then((value) {
-      setState(() {
-        _list = value ?? [];
-      });
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    await _sharedPreferenceService.init();
+
+    final value = await _sharedPreferenceService.read(
+      KeyPairConst.listPrefsKey,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _list = value ?? [];
     });
+  }
+
+    Future<void> _clearData() async {
+    await _sharedPreferenceService.init();
+
+    await _sharedPreferenceService.clear();
+
+    if (!mounted) return;
+
+    setState(() {
+      _list = [];
+    });
+
+    log('List cleared');
   }
 
   @override
@@ -41,11 +66,23 @@ class _ListScreenState extends State<ListScreen> {
         },
         itemCount: _list.length,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.push(AppRoutesConst.addItemScreen);
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        spacing: 16,
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              _clearData();
+            },
+            child: const Icon(Icons.clear),
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              context.push(AppRoutesConst.addItemScreen);
+            },
+            child: const Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }

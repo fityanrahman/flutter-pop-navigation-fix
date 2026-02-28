@@ -19,11 +19,11 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _sharedPreferenceService = SharedPreferenceService();
     _sharedPreferenceService.init();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,9 +34,13 @@ class _AddItemScreenState extends State<AddItemScreen> {
           children: [
             TextFormField(
               controller: _itemController,
-              decoration: const InputDecoration(
-                labelText: 'Item Name',
-              ),
+              decoration: const InputDecoration(labelText: 'Item Name'),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Please enter an item name';
+                }
+                return null;
+              },
             ),
           ],
         ),
@@ -53,7 +57,23 @@ class _AddItemScreenState extends State<AddItemScreen> {
   Future<void> _addItem() async {
     if (_formKey.currentState!.validate()) {
       final item = _itemController.text;
-      await _sharedPreferenceService.write(KeyPairConst.listPrefsKey, item);
+      await _sharedPreferenceService.init();
+
+      // 1️⃣ Read existing list
+      final existingList =
+          await _sharedPreferenceService.read<List<String>>(
+            KeyPairConst.listPrefsKey,
+          ) ??
+          [];
+
+      // 2️⃣ Add new item
+      existingList.add(item);
+
+      // 3️⃣ Save entire list
+      await _sharedPreferenceService.write(
+        KeyPairConst.listPrefsKey,
+        existingList,
+      );
 
       if (mounted) {
         context.push(AppRoutesConst.addNotesScreen);
