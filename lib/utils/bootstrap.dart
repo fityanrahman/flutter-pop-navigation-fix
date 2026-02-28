@@ -6,5 +6,6 @@ Future<void> bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await AppRouter.init();
+  
   runApp(const App());
 }

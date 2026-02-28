@@ -4,90 +4,68 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:router_experiment/const/app_routes_const.dart';
 import 'package:router_experiment/const/hero_tag_const.dart';
-import 'package:router_experiment/const/key_pair_const.dart';
 import 'package:router_experiment/service/shared_preference_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:router_experiment/screens/bloc/add_item/add_item_cubit.dart';
 
-class AddItemScreen extends StatefulWidget {
-  const AddItemScreen({super.key});
+class AddItemScreen extends StatelessWidget {
+  AddItemScreen({super.key});
 
-  @override
-  State<AddItemScreen> createState() => _AddItemScreenState();
-}
-
-class _AddItemScreenState extends State<AddItemScreen> {
-  late final SharedPreferenceService _sharedPreferenceService;
-  final _formKey = GlobalKey<FormState>();
-  final _itemController = TextEditingController();
-  @override
-  void initState() {
-    super.initState();
-    _sharedPreferenceService = SharedPreferenceService();
-    _sharedPreferenceService.init();
-  }
+  final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: const Text('Add Item Screen')),
-        body: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _itemController,
-                  decoration: const InputDecoration(labelText: 'Item Name'),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter an item name';
-                    }
-                    return null;
-                  },
+    return BlocProvider(
+      create: (context) => AddItemCubit(SharedPreferenceService()),
+      child: BlocConsumer<AddItemCubit, AddItemState>(
+        listenWhen: (previous, current) => previous.status != current.status,
+        listener: (context, state) async {
+          if (state.status == AddItemStatus.success) {
+            final result = await context.push(AppRoutesConst.addNotesScreen);
+            log('[AddItemScreen] ${result.toString()}');
+
+            if (result != null) {
+              context.pop(result);
+            }
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Add Item Screen')),
+            body: Form(
+              key: formKey,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      onChanged: (value) {
+                        context.read<AddItemCubit>().onChanged(value);
+                      },
+                      decoration: const InputDecoration(labelText: 'Item Name'),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter an item name';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          heroTag: HeroTagConst.confirmAddButton,
-          onPressed: () {
-            _addItem();
-          },
-          child: const Icon(Icons.check),
-        ),
+            floatingActionButton: FloatingActionButton(
+              heroTag: HeroTagConst.confirmAddButton,
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                context.read<AddItemCubit>().addItem();
+                }
+              },
+              child: const Icon(Icons.check),
+            ),
+          );
+        },
+      ),
     );
-  }
-
-  Future<void> _addItem() async {
-    if (_formKey.currentState!.validate()) {
-      final item = _itemController.text;
-      await _sharedPreferenceService.init();
-
-      // 1️⃣ Read existing list
-      final existingList =
-          await _sharedPreferenceService.read<List<String>>(
-            KeyPairConst.listPrefsKey,
-          ) ??
-          [];
-
-      // 2️⃣ Add new item
-      existingList.add(item);
-
-      // 3️⃣ Save entire list
-      await _sharedPreferenceService.write(
-        KeyPairConst.listPrefsKey,
-        existingList,
-      );
-
-      if (mounted) {
-        final result = await context.push(AppRoutesConst.addNotesScreen);
-        log('[Add item screen] ${result.toString()}');
-
-        if (result != null) {
-          context.pop(result);
-        }
-      }
-    }
   }
 }

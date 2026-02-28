@@ -17,7 +17,7 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutesConst.addItemScreen,
-          builder: (context, state) => const AddItemScreen(),
+          builder: (context, state) => AddItemScreen(),
         ),
         GoRoute(
           path: AppRoutesConst.addNotesScreen,

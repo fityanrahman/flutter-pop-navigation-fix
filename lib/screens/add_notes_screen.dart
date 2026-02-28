@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:router_experiment/const/hero_tag_const.dart';
 
-class AddNotesScreen extends StatefulWidget {
+class AddNotesScreen extends StatelessWidget {
   const AddNotesScreen({super.key});
 
-  @override
-  State<AddNotesScreen> createState() => _AddNotesScreenState();
-}
-
-class _AddNotesScreenState extends State<AddNotesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
