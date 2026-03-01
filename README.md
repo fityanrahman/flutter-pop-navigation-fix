@@ -18,7 +18,7 @@ This project showcases a multi-screen Flutter app with two different implementat
 ### Routing Problem Solved
 - **Issue**: `context.pop()` not returning to first screen properly after data operations
 - **Symptoms**: Wrong screen navigation, data not refreshing on return
-- **Solution**: Proper state management with Cubit pattern
+- **Solution**: Proper handling of `context.push()` result and navigation flow
 
 ## Implementations
 
@@ -113,7 +113,7 @@ BlocBuilder<ListScreenCubit, ListScreenState>(
 - **Cubit Branch**: BLoC pattern implementation
 ```bash
 # Switch to Cubit implementation
-git checkout cubit
+git checkout bloc_version
 ```
 
 ## Implementation Differences
